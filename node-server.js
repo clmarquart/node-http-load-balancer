@@ -30,9 +30,10 @@ for(var backend in backends) {
 			active: 0,
 			total: 0,
 			failed: 0,
-			status: 1,
+			status: setInterval(doHostStatusCheck,1500,backendPath.hosts[host]), //doHostStatusCheck(backendPath.hosts[host]),
 			check: ""
-		};		
+		};
+		// setTimeout(doHostStatusCheck(backendPath.hosts[host]),500)
 	}
 }
 
@@ -99,4 +100,27 @@ function getAvailableHost(backend) {
 		}
 	}
 	return host;
+}
+
+function doHostStatusCheck(host) {	
+	var options = {
+	  host: host.host,
+	  port: host.port,
+	  path: '/',
+		method: 'HEAD'
+	};
+	
+	var httpRequest = http.request(options, function(httpResponse) {
+		httpResponse.on('end',function() {
+		  logger.debug("HealthCheck: " + host.host+":"+host.port + " is avaiable");
+			host.serving.status = 1;
+		});
+	});
+	
+	httpRequest.on('error', function(e) {
+	  logger.error("HealthCheck: " + host.host+":"+host.port + " failed with message: " + e.message);
+		host.serving.status = -1;
+	});
+		
+	httpRequest.end();
 }
