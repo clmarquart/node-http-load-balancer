@@ -1,5 +1,6 @@
 # Example config.js
 
+{{{
 {
 	"pingInterval":2000,
 	"backends" : {		
@@ -16,4 +17,5 @@
 			]
 		}
 	}
-}
+}	
+}}}
