@@ -1,21 +1,11 @@
-var 
-	 winston = require('winston')
+var
+ 	 fs = require('fs')
+  ,config  = JSON.parse(fs.readFileSync('./config.js',"UTF-8"))
+	,winston = require('winston')
 	,http = require('http')
-	,status = {}
-	,backends = {
-		"/test/" : {
-			hosts : [
-				{
-					host: "127.0.0.1",
-					port: "8180"
-				},
-				{
-					host: "127.0.0.1",
-					port: "8280"
-				}
-			]
-		}
-	};
+	,ping = config.pingInterval
+	,backends = config.backends
+	;
 
 var logger = new (winston.Logger)({
   transports: [
@@ -30,10 +20,9 @@ for(var backend in backends) {
 			active: 0,
 			total: 0,
 			failed: 0,
-			status: setInterval(doHostStatusCheck,1500,backendPath.hosts[host]), //doHostStatusCheck(backendPath.hosts[host]),
+			status: setInterval(doHostStatusCheck,ping,backendPath.hosts[host]),
 			check: ""
 		};
-		// setTimeout(doHostStatusCheck(backendPath.hosts[host]),500)
 	}
 }
 
@@ -112,7 +101,7 @@ function doHostStatusCheck(host) {
 	
 	var httpRequest = http.request(options, function(httpResponse) {
 		httpResponse.on('end',function() {
-		  logger.debug("HealthCheck: " + host.host+":"+host.port + " is avaiable");
+		  logger.debug("HealthCheck: " + host.host+":"+host.port + " is available");
 			host.serving.status = 1;
 		});
 	});
