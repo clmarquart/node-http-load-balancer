@@ -9,7 +9,7 @@ var
 
 var logger = new (winston.Logger)({
   transports: [
-    new (winston.transports.Console)({colorize: true})
+    new (winston.transports.Console)({colorize: true, level: config.logLevel})
   ]
 });
 
@@ -20,9 +20,10 @@ for(var backend in backends) {
 			active: 0,
 			total: 0,
 			failed: 0,
-			status: setInterval(doHostStatusCheck,ping,backendPath.hosts[host]),
+			status: 1,
 			check: ""
 		};
+		setInterval(doHostStatusCheck,ping,backendPath.hosts[host]);
 	}
 }
 
@@ -82,12 +83,22 @@ http.createServer(function (request, response) {
 }).listen(80, "127.0.0.1");
 
 function getAvailableHost(backend) {
-	var lowest = backend.hosts[0].serving.total, host= backend.hosts[0];
+	var 
+		 lowest = -1
+		,host
+	;
+	
 	for(var x=0; x<backend.hosts.length; x++) {
-		if((parseInt(lowest)>parseInt(backend.hosts[x].serving.total)) && backend.hosts[x].serving.status===1){
-			host = backend.hosts[x];
+		// if((parseInt(lowest)>parseInt(backend.hosts[x].serving.total)) && backend.hosts[x].serving.status===1){
+		if(backend.hosts[x].serving.status===1) {
+			if(lowest>backend.hosts[x].serving.total || lowest===-1) {
+				lowest = backend.hosts[x].serving.total;
+				host = backend.hosts[x];
+			}
 		}
-	}
+	}	
+	
+	logger.debug("Choosing host: "+host.host+":"+host.port+" with status " + host.serving.status)
 	return host;
 }
 
@@ -98,16 +109,20 @@ function doHostStatusCheck(host) {
 	  path: '/',
 		method: 'HEAD'
 	};
-	
 	var httpRequest = http.request(options, function(httpResponse) {
 		httpResponse.on('end',function() {
-		  logger.debug("HealthCheck: " + host.host+":"+host.port + " is available");
+		  logger.debug("Pinging " + host.host+":"+host.port + " was successful");
 			host.serving.status = 1;
 		});
 	});
-	
+
 	httpRequest.on('error', function(e) {
-	  logger.error("HealthCheck: " + host.host+":"+host.port + " failed with message: " + e.message);
+		if(host.serving.status==-1){
+		  logger.error("HealthCheck: " + host.host+":"+host.port + " still failing!");
+		}else{ 
+		  logger.error("HealthCheck: " + host.host+":"+host.port + " failed with message: " + e.message);
+		}
+
 		host.serving.status = -1;
 	});
 		
