@@ -5,7 +5,7 @@ var
   ,winston = require('winston')
   ,http = require('http')
   ,ping = config.pingInterval
-  ,backends = config.backends
+  ,routes = config.routes
   ;
 
 var logger = new (winston.Logger)({
@@ -14,26 +14,28 @@ var logger = new (winston.Logger)({
   ]
 });
 
-for(var backend in backends) {
-  var backendPath = backends[backend];
-  for(var host in backendPath.hosts){
-    backendPath.hosts[host].serving = backendPath.hosts[host].serving || {
+for(var route in routes) {
+  var routePath = routes[route];
+
+  for(var host in routePath.hosts){
+    config.servers[routePath.hosts[host]].serving = config.servers[routePath.hosts[host]].serving || {
       active: 0,
       total: 0,
       failed: 0,
       status: 1,
       check: ""
     };
-    setInterval(hostControl.doHostStatusCheck,ping,backendPath.hosts[host]);
+
+    setInterval(hostControl.doHostStatusCheck,ping,routePath.hosts[host],config.servers[routePath.hosts[host]]);
   }
 }
 
 http.createServer(function (request, response) {
-  for(var backend in backends) {
-    if (request.url.match(new RegExp(backend))) {
-      logger.debug("Matched request for " + request.url + " to " + backend);
-      
-      var host = hostControl.getAvailableHost(backends[backend])
+  for(var route in routes) {
+    if (request.url.match(new RegExp(route))) {
+      logger.debug("Matched request for " + request.url + " to " + route);
+
+      var host = hostControl.getAvailableHost(routes[route], config.servers)
          ,options={
             host:host.host, 
             port:host.port, 
