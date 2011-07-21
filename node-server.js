@@ -23,6 +23,7 @@ for(var route in routes) {
       total: 0,
       failed: 0,
       status: 1,
+			bytes: 0,
       check: ""
     };
 
@@ -49,7 +50,7 @@ http.createServer(function (request, response) {
       var httpRequest = http.request(options, function(httpResponse) {
         
         var body="";
-				console.log('HEADERS: ' + JSON.stringify(httpResponse.headers));
+				// console.log('HEADERS: ' + JSON.stringify(httpResponse.headers));
 			  
 				var header = {
           'Server': 'Node JS',
@@ -69,8 +70,8 @@ http.createServer(function (request, response) {
 					.on('end',function() {
             response.end();
             
-            logger.debug("Received "+body.length+" bytes from backend server.");
-            
+            logger.debug("Received "+parseInt(body.length)+" bytes from backend server.");
+            host.serving.bytes += body.length;
             host.serving.active--;
           });
       });

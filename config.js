@@ -17,6 +17,7 @@
 	
 	"routes" : {
 		"/test/" : {
+			"method" : "response",
 			"hosts" : ["Tomcat1","Tomcat2"]
 		}
 	}
