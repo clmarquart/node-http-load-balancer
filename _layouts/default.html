@@ -1,0 +1,55 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+	<head>
+		<title>HTTP Load Balancer for Node.JS | Node JS</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<link href="{{site.base-url}}style/default.css" type="text/css" rel="stylesheet" media="all" />		
+		<link href="{{site.base-url}}style/syntax.css" type="text/css" rel="stylesheet" media="all" />
+	</head>
+	<body>
+	    <div id="wrapper">
+			<div id="header" class="borderFive">
+		        <h1><a href="{{site.base-url}}">HTTP Load Balancer for Node.JS</a></h1>
+				<a href="http://github.com/clmarquart/node-http-load-balancer/"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://gs1.wac.edgecastcdn.net/80460E/assets/img/71eeaab9d563c2b3c590319b398dd35683265e85/687474703a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677261795f3664366436642e706e67" alt="Fork me on GitHub" /></a>
+			</div>
+			<div id="sidebar">
+				<div id="menu" class="borderFive">
+	          		<ul>
+			            <li><span><a href="{{site.base-url}}docs/configuration.html">Configuration</a></span>
+					            
+						</li>
+					    <li><span>Issues</span>
+							<ul>
+					            <li><a href="https://github.com/clmarquart/node-http-load-balancer/issues">Browse</a></li>
+					            <li><a href="https://github.com/clmarquart/node-http-load-balancer/issues/new">Submit</a></li>
+							</ul>
+						</li>
+		            	<li><span>On GitHub</span>
+							<ul>
+					            <li><a href="http://github.com/clmarquart/node-http-load-balancer/">Browse Source</a></li>
+					            <li><a href="https://github.com/clmarquart/node-http-load-balancer/commits/master/">Activity</a></li>
+				           	</ul>
+						</li>
+		            </ul>
+	        	</div>
+	      	</div>
+	      	<div id="content">
+				{{content}}
+			</div>
+		</div>
+	  	<script src="{{site.base-url}}js/Importer.js" type="text/javascript">
+	      JS.Require("{{site.base-url}}js/Packaged.js");
+
+	      var themenu = document.getElementById("menu");
+	      var createMenu = function(){
+          		JS.Use("jquery",function(){
+				  JS.Use("accordion", function(){
+				 	$("#menu").accordion({"event":"click",speed:"fast"});
+			      	themenu.removeEventListener("mouseover",createMenu,false);
+				  })
+	            });
+	      };
+	      themenu.addEventListener("mouseover",createMenu,false);
+	    </script>
+	</body>
+</html>

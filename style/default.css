@@ -1,0 +1,99 @@
+body {color: #50413A; font-family: arial; font-size:12pt;}
+h2 { margin:0;padding:0; font-size: 1.0em ;}
+a { color: gray; text-decoration:none; }
+	a:hover {text-decoration: underline;}
+pre {
+  float:left;
+  width:100%;
+  border:1px gray dashed;
+  padding:5px;
+  overflow:auto;
+  background:#eaeaea;
+} 
+#wrapper {
+  width:780px;
+  margin:0 auto;
+}
+#header {
+	margin:0 0 10px;
+	background: #50413A;
+	padding: 10px 0;
+
+	border:1px black solid;
+
+	/* For WebKit (Safari, Google Chrome etc) */
+	background: -webkit-gradient(linear, left top, left bottom, from(#50413A), to(#89807B));
+	/* For Mozilla/Gecko (Firefox etc) */
+	background: -moz-linear-gradient(top, #50413A, #89807B);
+	/* For Internet Explorer 5.5 - 7 */
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#FF0000FF, endColorstr=#FFFFFFFF);
+	/* For Internet Explorer 8 */
+	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#FF0000FF, endColorstr=#FFFFFFFF)";
+}
+  #header h1 {padding: 0px 20px;margin:0px;}
+    #header a {color:#FFF;}
+    #header a:hover {text-decoration:none;}
+
+#sidebar { float:left; width:200px; height:100%;}
+
+  #menu {
+	  float:left;
+	  width:200px;
+	  border:1px #50413A solid;
+	  margin:0;
+  }
+    #menu span {
+	    display: inline-block;
+	    padding: 0 0 0 4px;
+	    width: 196px;
+		/*
+	      background: blue;
+	      color:#FFF;
+		*/
+    }
+		#menu li:first-child {
+			border-top:none;
+		}
+		#menu span:hover {
+			text-decoration: underline;
+		}
+    #menu ul {
+      float:left;
+      margin:0;
+      padding:0;
+      list-style:none;
+      width:100%;
+    }
+	  #menu ul ul {
+		display: none;
+		margin: 0 0 0 15px;
+	  }
+      #menu li, #menu span {
+        cursor:pointer;
+      }
+        #menu li {
+          padding:4px;
+        }
+  #demoLinks { float: left; font-size:80%;margin:20px 0 0;}
+#content {
+  float:left;
+  width:560px;
+  margin:0;
+  padding:0 0 0 10px;
+	font-size:0.9em;
+}
+
+.borderFive { 
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+}
+
+  .desc{ float:left;width:100%;margin:0 0 10px 0;padding:0;}
+  #click-here{cursor:pointer;text-decoration:underline;color:blue;}
+  
+  .ui-dialog { border:2px gray solid; background: #fff; }
+    .ui-dialog-titlebar { text-align:right;border-bottom:2px gray solid;background:gray;}
+      .ui-dialog-titlebar a {color:#fff;}
+    #dialog{ min-height:35px !important;}
+    .ui-dialog-buttonpane { text-align: right; }
