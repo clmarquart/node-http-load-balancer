@@ -1,0 +1,19 @@
+{ 
+	 "name": "http-load-balancer"
+	,"version": "0.1.0"
+	,"description": "HTTP load balancer written in node.js"
+	,"keywords": [ "http", "load balancer"]
+  	,"author": "Cody Marquart <clmarquart@gmail.com>",
+	,"main": "./node-server.js"
+	,"repository": { 
+		 "type": "git"
+  		,"url": "git://github.com/clmarquart/node-http-load-balancer.git"
+  	}
+	,"engines": { "node": ">= 0.4.8" }
+	,"dependencies": {
+		"winston": "0.3.1"
+	}
+	,"devDependencies": {
+		"node-dev": "0.1.6"
+	}
+}
