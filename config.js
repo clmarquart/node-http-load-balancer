@@ -1,4 +1,8 @@
 {
+	"log" : {
+		"level": "info",
+		"appender": "file"
+	},
 	"logLevel": "info",
 	"pingInterval":2000,
 	
@@ -17,7 +21,7 @@
 	
 	"routes" : {
 		"/test/" : {
-			"method" : "response",
+			"method" : "byte",
 			"hosts" : ["Tomcat1","Tomcat2"]
 		}
 	}

@@ -1,3 +1,7 @@
+Running on port 80, the load balancer will distribute requests to backend servers based on 1 of 2 methods:
+* Number of requests served
+* Total amount bytes served
+
 # Example config.js
 
 ```

@@ -3,8 +3,8 @@ var
 	,agents = 10
 	,count = agents
 	,intervals = []
-	,duration = 15000
-	,interval = 200
+	,duration = 10000
+	,interval = 50
 ;
 
 for(var x=0; x<agents; x++) {

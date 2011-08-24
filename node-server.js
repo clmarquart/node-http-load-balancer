@@ -1,6 +1,7 @@
 var
    fs = require('fs')
 	,hostControl = require('./lib/hostControl')
+	,logControl = require('./lib/logControl')
   ,config  = JSON.parse(fs.readFileSync('./config.js',"UTF-8"))
   ,winston = require('winston')
   ,http = require('http')
@@ -8,11 +9,7 @@ var
   ,routes = config.routes
   ;
 
-var logger = new (winston.Logger)({
-  transports: [
-    new (winston.transports.Console)({colorize: true, level: config.logLevel})
-  ]
-});
+var logger = logControl.createLogger();
 
 for(var route in routes) {
   var routePath = routes[route];
@@ -48,10 +45,7 @@ http.createServer(function (request, response) {
       host.serving.active++;
       host.serving.total++;
       var httpRequest = http.request(options, function(httpResponse) {
-        
-        var body="";
-				// console.log('HEADERS: ' + JSON.stringify(httpResponse.headers));
-			  
+        var body="";			  
 				var header = {
           'Server': 'Node JS',
           'Content-Type': httpResponse.headers['content-type'],
@@ -69,13 +63,11 @@ http.createServer(function (request, response) {
           })
 					.on('end',function() {
             response.end();
-            
-            logger.debug("Received "+parseInt(body.length)+" bytes from backend server.");
+            logger.debug(host.name+" served "+parseInt(body.length)+" bytes ("+host.serving.bytes+")");
             host.serving.bytes += body.length;
             host.serving.active--;
           });
       });
-      
       httpRequest.on('error', function(e) {
         host.serving.failed++;
         
@@ -89,7 +81,7 @@ http.createServer(function (request, response) {
 
       httpRequest.end();
     } else response.end();
-    
+
     break;
   }
 }).listen(80, "127.0.0.1");
