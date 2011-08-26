@@ -2,6 +2,7 @@ var
    fs = require('fs')
 	,hostControl = require('./lib/hostControl')
 	,logControl = require('./lib/logControl')
+	,statusControl = require('./lib/statusControl')
   ,config  = JSON.parse(fs.readFileSync('./config.js',"UTF-8"))
   ,winston = require('winston')
   ,http = require('http')
@@ -34,52 +35,69 @@ http.createServer(function (request, response) {
       logger.debug("Matched request for " + request.url + " to " + route);
 
       var host = hostControl.getAvailableHost(routes[route], config.servers)
-         ,options={
+         ,options
+
+			if(host) {
+					options={
             host:host.host, 
             port:host.port, 
             path:request.url
           };
       
-      logger.debug("Sending request to "+host.host+":"+host.port+request.url);
+      	logger.debug("Sending request to "+host.host+":"+host.port+request.url);
       
-      host.serving.active++;
-      host.serving.total++;
-      var httpRequest = http.request(options, function(httpResponse) {
-        var body="";			  
-				var header = {
-          'Server': 'Node JS',
-          'Content-Type': httpResponse.headers['content-type'],
-          'Date': new Date()
-				};
-				if(httpResponse.headers["set-cookie"])
-					header["set-cookie"] = httpResponse.headers["set-cookie"]
+	      host.serving.active++;
+	      host.serving.total++;
+	      var httpRequest = http.request(options, function(httpResponse) {
+	        var body="";			  
+					var header = {
+	          'Server': 'Node JS',
+	          'Content-Type': httpResponse.headers['content-type'],
+	          'Date': new Date()
+					};
+					if(httpResponse.headers["set-cookie"])
+						header["set-cookie"] = httpResponse.headers["set-cookie"]
 					
-        response.writeHead(httpResponse.statusCode, header);
+	        response.writeHead(httpResponse.statusCode, header);
         
-        httpResponse
-					.on('data',function(chunk) {
-            body+=chunk;
-            response.write(chunk);
-          })
-					.on('end',function() {
-            response.end();
-            logger.debug(host.name+" served "+parseInt(body.length)+" bytes ("+host.serving.bytes+")");
-            host.serving.bytes += body.length;
-            host.serving.active--;
-          });
-      });
-      httpRequest.on('error', function(e) {
-        host.serving.failed++;
+	        httpResponse
+						.on('data',function(chunk) {
+	            body+=chunk;
+	            response.write(chunk);
+	          })
+						.on('end',function() {
+	            response.end();
+	            logger.debug(host.name+" served "+parseInt(body.length)+" bytes ("+host.serving.bytes+")");
+	            host.serving.bytes += body.length;
+	            host.serving.active--;
+	          });
+	      });
+	      httpRequest.on('error', function(e) {
+	        host.serving.failed++;
         
-        logger.error('Problem with the request: ' + e.message);
+	        logger.error('Problem with the request: ' + e.message);
       
-        response.writeHead(503, {'Content-Type': 'text/html'});
-        response.end();
-        host.serving.status=-1;
-        host.serving.active--;
-      });
+	        response.writeHead(503, {'Content-Type': 'text/html'});
+	        response.end();
+	        host.serving.status=-1;
+	        host.serving.active--;
+	      });
 
-      httpRequest.end();
+	      httpRequest.end();
+			} else {
+				statusControl.failed(route);
+				
+				logger.error('No available hosts! Check for failpage on route: ' + route)
+				
+				if(routes[route].failpage) {
+					fs.readFile("."+routes[route].failpage, function (err, data) {
+					  if (err) throw err;
+					
+					  response.write(data);
+						response.end();
+					});
+				}
+			}
     } else response.end();
 
     break;

@@ -1,14 +1,14 @@
 {
 	"log" : {
-		"level": "info",
-		"appender": "file"
+		"level": "debug",
+		"appender": "console"
 	},
 	"logLevel": "info",
 	"pingInterval":2000,
 	
 	"servers" : {
 		"Tomcat1" : {
-			"name": "Tomcat1",
+			"route": "Tomcat1",
 			"host": "127.0.0.1",
 			"port": "8180"
 		},
@@ -22,7 +22,8 @@
 	"routes" : {
 		"/test/" : {
 			"method" : "byte",
-			"hosts" : ["Tomcat1","Tomcat2"]
+			"hosts" : ["Tomcat1","Tomcat2"],
+			"failpage" : "/failpages/test.html"
 		}
 	}
 }
