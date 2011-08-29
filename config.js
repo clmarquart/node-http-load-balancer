@@ -1,6 +1,6 @@
 {
 	"log" : {
-		"level": "debug",
+		"level": "error",
 		"appender": "console"
 	},
 	"logLevel": "info",
@@ -23,7 +23,8 @@
 		"/test/" : {
 			"method" : "byte",
 			"hosts" : ["Tomcat1","Tomcat2"],
-			"failpage" : "/failpages/test.html"
+			"failpage" : "/failpages/test.html",
+			"sticky" : 3
 		}
 	}
 }

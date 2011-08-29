@@ -34,7 +34,7 @@ http.createServer(function (request, response) {
     if (request.url.match(new RegExp(route))) {
       logger.debug("Matched request for " + request.url + " to " + route);
 
-      var host = hostControl.getAvailableHost(routes[route], config.servers)
+      var host = hostControl.getAvailableHost(route, config.servers, request)
          ,options
 
 			if(host) {
@@ -67,7 +67,7 @@ http.createServer(function (request, response) {
 	          })
 						.on('end',function() {
 	            response.end();
-	            logger.debug(host.name+" served "+parseInt(body.length)+" bytes ("+host.serving.bytes+")");
+	            logger.debug(host.route+" served "+parseInt(body.length)+" bytes ("+host.serving.bytes+")");
 	            host.serving.bytes += body.length;
 	            host.serving.active--;
 	          });
@@ -102,4 +102,4 @@ http.createServer(function (request, response) {
 
     break;
   }
-}).listen(80, "127.0.0.1");
+}).listen(80, "192.168.1.64");
