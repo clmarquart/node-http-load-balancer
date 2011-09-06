@@ -6,37 +6,25 @@ var
   ,config  = JSON.parse(fs.readFileSync('./config.js',"UTF-8"))
   ,winston = require('winston')
   ,http = require('http')
-  ,ping = config.pingInterval
   ,routes = config.routes
-  ;
-
-var logger = logControl.createLogger();
-
-for(var route in routes) {
-  var routePath = routes[route];
-
-  for(var host in routePath.hosts){
-    config.servers[routePath.hosts[host]].serving = config.servers[routePath.hosts[host]].serving || {
-      active: 0,
-      total: 0,
-      failed: 0,
-      status: 1,
-			bytes: 0,
-      check: ""
-    };
-
-    setInterval(hostControl.doHostStatusCheck,ping,routePath.hosts[host],config.servers[routePath.hosts[host]]);
-  }
-}
+	,logger = logControl.createLogger()
+	,hoster = hostControl.setupHosts(routes)
+;
 
 http.createServer(function (request, response) {
-  for(var route in routes) {
+	var 
+		 route
+		,host
+		,options
+		,httpRequest
+	;
+	
+  for(route in routes) {
     if (request.url.match(new RegExp(route))) {
       logger.debug("Matched request for " + request.url + " to " + route);
 
-      var host = hostControl.getAvailableHost(route, config.servers, request)
-         ,options
-
+      host = hostControl.getAvailableHost(route, request)
+			
 			if(host) {
 					options={
             host:host.host, 
@@ -48,15 +36,19 @@ http.createServer(function (request, response) {
       
 	      host.serving.active++;
 	      host.serving.total++;
-	      var httpRequest = http.request(options, function(httpResponse) {
-	        var body="";			  
-					var header = {
-	          'Server': 'Node JS',
-	          'Content-Type': httpResponse.headers['content-type'],
-	          'Date': new Date()
-					};
-					if(httpResponse.headers["set-cookie"])
+	      httpRequest = http.request(options, function(httpResponse) {
+	        var 
+						 body = ""
+						,header = {
+	          	'Server': 'Node JS',
+		          'Content-Type': httpResponse.headers['content-type'],
+		          'Date': new Date()
+						}
+					;
+					
+					if(httpResponse.headers["set-cookie"]) {
 						header["set-cookie"] = httpResponse.headers["set-cookie"]
+					}
 					
 	        response.writeHead(httpResponse.statusCode, header);
         
@@ -67,11 +59,17 @@ http.createServer(function (request, response) {
 	          })
 						.on('end',function() {
 	            response.end();
-	            logger.debug(host.route+" served "+parseInt(body.length)+" bytes ("+host.serving.bytes+")");
+	
 	            host.serving.bytes += body.length;
 	            host.serving.active--;
+	
+							statusControl.served(route, host, body.length);
+							
+	            logger.debug(host.route+" served "+parseInt(body.length)+" bytes ("+statusControl.bytesServed(route,host)+")");
 	          });
 	      });
+	
+				// TODO This should send the request to the another server
 	      httpRequest.on('error', function(e) {
 	        host.serving.failed++;
         
@@ -79,6 +77,7 @@ http.createServer(function (request, response) {
       
 	        response.writeHead(503, {'Content-Type': 'text/html'});
 	        response.end();
+	
 	        host.serving.status=-1;
 	        host.serving.active--;
 	      });
@@ -102,4 +101,4 @@ http.createServer(function (request, response) {
 
     break;
   }
-}).listen(80, "192.168.1.64");
+}).listen(config.port, config.host);

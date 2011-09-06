@@ -1,6 +1,8 @@
 {
+	"host" : "192.168.1.64",
+	"port" : 80,
 	"log" : {
-		"level": "error",
+		"level": "debug",
 		"appender": "console"
 	},
 	"logLevel": "info",
@@ -23,8 +25,7 @@
 		"/test/" : {
 			"method" : "byte",
 			"hosts" : ["Tomcat1","Tomcat2"],
-			"failpage" : "/failpages/test.html",
-			"sticky" : 3
+			"failpage" : "/failpages/test.html"
 		}
 	}
 }
