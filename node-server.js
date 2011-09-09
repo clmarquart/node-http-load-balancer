@@ -9,6 +9,7 @@ var
   ,routes = config.routes
 	,logger = logControl.createLogger()
 	,hoster = hostControl.setupHosts(routes)
+	,stats = statusControl.start()
 ;
 
 http.createServer(function (request, response) {
@@ -26,11 +27,11 @@ http.createServer(function (request, response) {
       host = hostControl.getAvailableHost(route, request)
 			
 			if(host) {
-					options={
-            host:host.host, 
-            port:host.port, 
-            path:request.url
-          };
+				options={
+           host:host.host, 
+           port:host.port, 
+           path:request.url
+         };
       
       	logger.debug("Sending request to "+host.host+":"+host.port+request.url);
       
@@ -63,9 +64,9 @@ http.createServer(function (request, response) {
 	            host.serving.bytes += body.length;
 	            host.serving.active--;
 	
-							statusControl.served(route, host, body.length);
+							hostControl.served(route, host, body.length);
 							
-	            logger.debug(host.route+" served "+parseInt(body.length)+" bytes ("+statusControl.bytesServed(route,host)+")");
+	            logger.debug(host.route+" served "+parseInt(body.length)+" bytes.");
 	          });
 	      });
 	
@@ -84,7 +85,7 @@ http.createServer(function (request, response) {
 
 	      httpRequest.end();
 			} else {
-				statusControl.failed(route);
+				hostControl.failed(route);
 				
 				logger.error('No available hosts! Check for failpage on route: ' + route)
 				

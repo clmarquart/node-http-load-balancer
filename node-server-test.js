@@ -1,10 +1,10 @@
 var 
 	 http = require('http')
-	,agents = 10
+	,agents = 20
 	,count = agents
 	,intervals = []
 	,duration = 10000
-	,interval = 50
+	,interval = 20
 ;
 
 for(var x=0; x<agents; x++) {
@@ -22,7 +22,7 @@ function runAgentRequest(agent){
 	intervals[agent].count++;
 	
 	var options = {
-  	host: "127.0.0.1",
+  	host: "192.168.1.64",
 	  port: 80,
 	  path: '/test/index.html',
 		method: 'GET'
@@ -31,11 +31,7 @@ function runAgentRequest(agent){
 	var httpRequest = http.request(options, function(httpResponse) {
 		if(httpResponse.statusCode!==200){
 			intervals[agent].failures++;
-			// console.log("FAILED!!!!!")
 		} else {
-			// httpResponse.on('end',function() {			
-			  // console.log("Request #"+intervals[agent].count+" for agent "+agent+" was successful.");
-			// });	
 			intervals[agent].success++;
 		}
 	});	

@@ -26,6 +26,7 @@
 			"method" : "byte",
 			"hosts" : ["Tomcat1","Tomcat2"],
 			"failpage" : "/failpages/test.html"
+			,"sticky" : 3
 		}
 	}
 }
