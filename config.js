@@ -1,6 +1,11 @@
 {
 	"host" : "192.168.1.64",
 	"port" : 80,
+	"ssl" : {
+		"port" : 443,
+		"key" : "/etc/apache2/ssl/server.key",
+		"crt" : "/etc/apache2/ssl/server.crt"
+	},
 	"log" : {
 		"level": "debug",
 		"appender": "console"
